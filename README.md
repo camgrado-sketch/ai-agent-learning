@@ -1,5 +1,7 @@
 # ai-agent-learning
+
 My 10-week learning workspace for AI Agent, CLI workflow, design research automation, and local knowledge management.
+
 # AI Agent Learning Workspace
 
 这是我的 AI Agent 学习仓库，用于记录 Track A — CLI Power User 的 10 周学习过程。
@@ -20,19 +22,51 @@ My 10-week learning workspace for AI Agent, CLI workflow, design research automa
 
 初步计划：
 
-- Stage 0：Python、GitHub、CLI、JSON/API 基础
-- Stage 1：LLM 基础、API、token、模型成本
-- Stage 2：Prompt Engineering
-- A1：选择并使用 CLI Agent
-- A2：建立可重复使用的 CLI 工作流
-- A3：将 CLI Agent 接入真实工作流程
+* Stage 0：Python、GitHub、CLI、JSON/API 基础
+* Stage 1：LLM 基础、API、token、模型成本
+
+\## Stage 1 总结：LLM 基础与调研自动化
+
+
+
+\### 我掌握的自动化工具
+
+\- \*\*模型调用\*\*：学会通过 Python 调用 GPT-4o/DeepSeek API。
+
+\- \*\*批量处理\*\*：能一次性生成多个品牌的 CMF 调研报告。
+
+\- \*\*数据结构化\*\*：能让 AI 输出标准的 JSON 家具规格参数。
+
+\- \*\*成本控制\*\*：学会使用 `temperature=0` 和 `max\_tokens` 节省积分。
+
+
+
+\### 我的家具调研工作流原型
+
+1\. 在 `prompt\_template\_arper.md` 中定义专业角色。
+
+2\. 在 `batch\_research.py` 中填入待调研的品牌清单。
+
+3\. 运行脚本，自动在 `research\_outputs/` 生成 Markdown 报告。
+
+4\. 将报告直接导入 Obsidian 或作为设计周报素材。
+
+
+
+* Stage 2：Prompt Engineering
+* A1：选择并使用 CLI Agent
+* A2：建立可重复使用的 CLI 工作流
+* A3：将 CLI Agent 接入真实工作流程
 
 ## 每日学习记录
 
 我会每天记录：
 
-- 今日学习主题
-- 今日完成的练习
-- 遇到的问题
-- 可复用的 prompt / 脚本 / 文件模板
-- 明天要继续的问题
+* 今日学习主题
+* 今日完成的练习
+* 遇到的问题
+* 可复用的 prompt / 脚本 / 文件模板
+* 明天要继续的问题
+
+
+
