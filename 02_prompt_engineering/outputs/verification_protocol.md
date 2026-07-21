@@ -1,7 +1,7 @@
 # 家具调研事实核查协议
 
 ## 待核查信息
-例如:“Arper 的 Catifa 53 椅子是由德国品牌 Walter Knoll生成的，其设计师是 Charles & Ray Eames。”
+“Arper 的 Catifa 53 椅子是由德国品牌 Walter Knoll生成的，其设计师是 Charles & Ray Eames。”
 
 ## 核查任务
 请严格执行以下步骤：
