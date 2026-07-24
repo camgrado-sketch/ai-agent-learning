@@ -27,6 +27,8 @@ image_url = (
 
 
 
+
+
 print("AI 正在观察图片，请稍后...")
 
  # 3.发起多模态调用
@@ -54,7 +56,7 @@ completion = client.chat.completions.create(
 
 print("---视觉分析报告 ---")
 
-print(completion.choices[0].message.reasoning_content)
+print(completion.choices[0].message.content)
 
         
 # 设置输出内容保存文件
@@ -83,7 +85,7 @@ filename = f"{title}_{date}.md"
 file_path =save_dir/filename
 
 
-answer = completion.choices[0].message.reasoning_content
+answer = completion.choices[0].message.content
 # 写入文件
 with open(
     file_path,
