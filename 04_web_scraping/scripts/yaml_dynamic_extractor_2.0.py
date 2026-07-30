@@ -56,14 +56,24 @@ def clean_filename(name):
         "",
         name
     )
+    
+    name = name.replace(".", "")
 
-    name = name.replace(
-        " ",
-        "_"
+    name = re.sub(
+        r'\s+',
+        "_",
+        name
     )
 
+    name = re.sub(
+        r'_+',
+        "_",
+        name
+    )
 
-    return name
+    return name.strip("_")
+
+    
 
 
 
@@ -112,6 +122,7 @@ def extract_description(text):
 async def scrape_product(
         page,
         product_url,
+        product_name,
         config
 ):
 
@@ -133,48 +144,7 @@ async def scrape_product(
         await page.title()
     )
 
-
-
-    # -----------------------------
-    # 产品名称
-    # -----------------------------
-
-    name_selector = (
-        config["product"]
-        ["name"]
-        ["selector"]
-    )
-
-
-    name_locator = page.locator(
-        name_selector
-    )
-
-
-    if await name_locator.count() > 0:
-
-        product_name = (
-            await name_locator
-            .first
-            .text_content()
-        )
-
-    else:
-
-        product_name = "unknown"
-
-
-
-    product_name = product_name.strip()
-
-
-
-    print(
-        "产品名称:",
-        product_name
-    )
-
-
+    
 
     # -----------------------------
     # 设计师信息
@@ -315,7 +285,7 @@ def save_markdown(data):
 
     output_file = (
     OUTPUT_DIR /
-    f"{filename}_{timestamp}.md"
+    f"{filename}.md"
     )
    
 
@@ -460,13 +430,20 @@ async def main():
                     data = await scrape_product(
                         page,
                         url,
+                        name,
                         config
                     )
 
+                    print("原始名称:", name)
 
+                    clean_name = clean_filename(name)
+
+                    print("清理后:", clean_name)
+                    
+                    
                     save_markdown(
-                        data
-                    )
+                            data
+                        )
 
 
                 except Exception as e:
