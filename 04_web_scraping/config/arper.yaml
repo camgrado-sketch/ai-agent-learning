@@ -1,0 +1,194 @@
+# Arper Product Detail Page Selectors Configuration
+# Target URL example: https://www.arper.com/us_EN/7600-20article-207600.html
+#
+# DOM Notes:
+#   - Page is built on Magento 2 + PageBuilder
+#   - Product gallery uses Slick Carousel (.product-image-carousal)
+#   - Inspiration section uses Slick Carousel (.inspiration-component)
+#   - Resources section is anchored at id="documentation"
+#   - 3D/CAD download links are JS-triggered (no href in static HTML) → require login session
+#   - Certification download links are publicly accessible (href present in static HTML)
+
+product:
+
+  # ─────────────────────────────────────────────
+  # 1. 品名及基础信息  Product Name & SKU
+  # ─────────────────────────────────────────────
+  name:
+    selector: "h2.product-title"
+    attribute: "text"
+    example: "Aava 02"
+
+  sku_and_material:
+    selector: ".product-info-slot-top p.product-description"
+    attribute: "text"
+    example: "Plastic - #7600"
+
+  category:
+    selector: ".category"
+    attribute: "text"
+    example: "Chairs"
+
+  # ─────────────────────────────────────────────
+  # 2. 产品图  Product Images (Slick Carousel)
+  # ─────────────────────────────────────────────
+  # Arper static HTML already contains full src — no lazy-load.
+  # .slick-cloned slides are duplicates injected by Slick; must be excluded.
+  # First non-cloned slide = primary / hero image.
+  images:
+    container:
+      selector: ".product-image-carousal"
+    gallery:
+      selector: ".product-image-carousal .slick-slide:not(.slick-cloned) img.product-image"
+      attribute: "src"
+      multiple: true
+    fallback_gallery:
+      selector: ".product-image-carousal img.product-image"
+      attribute: "src"
+      multiple: true
+      note: "Fallback when Slick has not yet initialised (raw static HTML)"
+
+  # ─────────────────────────────────────────────
+  # 3. 设计师  Designer
+  # ─────────────────────────────────────────────
+  designer:
+    selector: ".collection-detail-left"
+    attribute: "text"
+    regex: "Design by ([^,]+,\\s*\\d{4})"
+    example: "Design by Antti Kotilainen, 2023"
+
+  # ─────────────────────────────────────────────
+  # 4. 设计说明  Design Description
+  # ─────────────────────────────────────────────
+  # Same container as designer; strip "Design by …" prefix and
+  # remove .read-more / .read-less button nodes before extracting.
+  description:
+    selector: ".collection-detail-left"
+    attribute: "text"
+    strip_nodes: [".read-more", ".read-less"]
+    strip_prefix_regex: "^Design by [^,]+,\\s*\\d{4}\\s*"
+
+  # ─────────────────────────────────────────────
+  # 5. 产品配置及细节  Configuration & Variants
+  # ─────────────────────────────────────────────
+  configuration:
+    frame_label:
+      selector: ".choose-base-section .choose-base-header"
+      attribute: "text"
+      example: "Choose Frame: 4 Legs"
+
+    variants:
+      selector: ".choose-base-section a.choose-base-image-link"
+      attribute: "href"
+      multiple: true
+      fields:
+        href:
+          attribute: "href"
+          note: "URL of the variant product page"
+        thumbnail:
+          selector: "img"
+          attribute: "src"
+          note: "Variant thumbnail image"
+
+    sustainability_highlights:
+      selector: ".sustainability-quote-block"
+      attribute: "text"
+      note: "Feature highlight paragraphs (Versatile / Removable Cushion / etc.)"
+
+  # ─────────────────────────────────────────────
+  # 6. 灵感图  Inspiration Images (Slick Carousel)
+  # ─────────────────────────────────────────────
+  inspiration_images:
+    container:
+      selector: ".inspiration-component"
+    slides:
+      selector: ".inspiration-component .slick-slide:not(.slick-cloned) img"
+      attribute: "src"
+      multiple: true
+    fallback_slides:
+      selector: ".inspiration-component img"
+      attribute: "src"
+      multiple: true
+      note: "Fallback when Slick has not yet initialised"
+
+  # ─────────────────────────────────────────────
+  # 7. 尺寸图  Dimension / Technical Drawing
+  # ─────────────────────────────────────────────
+  dimension_images:
+    selector: ".collection-detail-right img"
+    attribute: "src"
+    multiple: true
+    note: "SOS technical drawing image (e.g. SOS_Aava02_Eng_1.png)"
+
+  # ─────────────────────────────────────────────
+  # 8. 资源下载  Resources & Downloads
+  # ─────────────────────────────────────────────
+  # Section anchor: <div id="documentation" ...>
+  # Left column  → dimension image (already covered in §7)
+  # Right column → file downloads + certifications
+  resources:
+    section_container:
+      selector: "#documentation"
+      note: "Outer wrapper for the entire Documentation / Resources section"
+
+    section_title:
+      selector: "#documentation h2"
+      attribute: "text"
+      example: "Documentation"
+
+    # ── 8a. 3D / CAD 文件列表  (links are JS-triggered; href absent in static HTML)
+    # Each item is a <span class="product-download-links download-document …">
+    # Type variants: doc-down (DWG), axes (3DS / 3DS Max / Revit / SketchUp / Archicad)
+    cad_files:
+      container:
+        selector: ".documentation-right-section .product-download-links"
+        note: "Top-level container for all CAD/3D file entries"
+      items:
+        selector: ".documentation-right-section span.download-document"
+        multiple: true
+        fields:
+          file_format:
+            attribute: "text"
+            note: "Human-readable format label, e.g. '2D DWG', '3DS', 'Revit'"
+          file_size:
+            selector: "span.document-size"
+            attribute: "text"
+            example: "0.05Mb"
+          download_type:
+            attribute: "class"
+            note: >
+              CSS class encodes file type:
+                doc-down → 2D DWG
+                axes     → 3D formats (3DS, 3DS Max, Revit, SketchUp, Archicad)
+      login_required: true
+      note: >
+        Download URLs are not present in static HTML.
+        They are fetched via JS after user authentication.
+        To retrieve actual URLs, use Cookie injection or Selenium login session.
+
+    # ── 8b. 认证文件  (publicly accessible — href present in static HTML)
+    certifications:
+      container:
+        selector: ".documentation-certifications"
+      title:
+        selector: ".documentation-certifications .product-section-title"
+        attribute: "text"
+        example: "Certifications"
+      items:
+        selector: ".documentation-certifications .product-section-row"
+        multiple: true
+        fields:
+          name:
+            selector: "a span.product-download-links"
+            attribute: "text"
+            example: "GREENGUARD Gold Certification"
+          download_url:
+            selector: "a[download]"
+            attribute: "href"
+            example: "https://arper-cdn.thron.com/delivery/public/document/arper/.../Certification_Greenguard_Gold.pdf"
+          icon_class:
+            selector: "span.certifications-img"
+            attribute: "class"
+            note: "CSS class indicates cert type: certifications-gold / certifications-tuv"
+      login_required: false
+      note: "PDF links are publicly accessible via arper-cdn.thron.com"

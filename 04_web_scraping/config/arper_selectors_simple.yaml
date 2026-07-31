@@ -1,0 +1,79 @@
+# ─────────────────────────────────────────────────────────
+# Arper 产品详情页 爬虫选择器配置（初学版）
+# 目标页面：https://www.arper.com/us_EN/7600-20article-207600.html
+# ─────────────────────────────────────────────────────────
+#
+# 【如何读懂这份文件】
+#
+#   每个字段对应页面上你想抓取的一块内容，由三行属性描述：
+#
+#   selector  → 告诉爬虫"去哪里找"，写的是 CSS 选择器
+#               就像在网页上用放大镜定位某个元素
+#
+#   attribute → 告诉爬虫"取什么值"
+#               text  = 取元素里的文字
+#               src   = 取图片的网址
+#               href  = 取链接的网址
+#
+#   multiple  → 告诉爬虫"这里有几个结果"
+#               false = 只取第一个（单值）
+#               true  = 全部取回来（返回列表）
+#
+# ─────────────────────────────────────────────────────────
+
+
+brand:
+  value: "Arper"
+  
+product:
+
+  name:
+      selector: "h2.product-title"
+      attribute: "text"
+      multiple: false
+
+  # ── 产品图 ──────────────────────────────────────────────
+  # 页面上的产品轮播图，共 16 张
+  # :not(.slick-cloned) 是为了排除轮播插件自动复制的重复图片
+  images:
+    selector: "img.product-image"
+    attribute: "src"
+    multiple: true
+
+  # ── 设计师 ──────────────────────────────────────────────
+  # 页面上显示 "Design by Antti Kotilainen, 2023" 的那段文字
+  # 注意：这个区域和下面的"设计说明"在同一个容器里
+  #       脚本里需要用正则把 "Design by …" 这一行单独提取出来
+  designer:
+    selector: ".collection-detail-left"
+    attribute: "text"
+    multiple: false
+
+  # ── 设计说明 ─────────────────────────────────────────────
+  # 产品的正文描述，和设计师在同一个容器
+  # 脚本里需要把开头的 "Design by …" 那行去掉，剩下的就是说明文字
+  description:
+    selector: ".collection-detail-left"
+    attribute: "text"
+    multiple: false
+
+  # ── 尺寸图 ──────────────────────────────────────────────
+  # 产品的技术尺寸图（SOS 图），通常是 1 张标注了尺寸的 PNG
+  dimension_images:
+    selector: ".collection-detail-right img"
+    attribute: "src"
+    multiple: true
+
+  # ── 认证文件 ─────────────────────────────────────────────
+  # 页面底部 Documentation 区域的认证 PDF 下载
+  # 这些链接是公开的，不需要登录就能直接下载
+  # 拆成两个子字段分别取"认证名称"和"下载地址"
+  certifications:
+    name:
+      selector: ".documentation-certifications a span.product-download-links"
+      attribute: "text"
+      multiple: true
+    download_url:
+      selector: ".documentation-certifications a[download]"
+      attribute: "href"
+      multiple: true

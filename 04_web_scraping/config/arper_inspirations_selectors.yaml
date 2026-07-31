@@ -1,0 +1,118 @@
+# Arper Inspirations 项目案例列表页 爬虫选择器（初学版）
+# 目标页面：https://www.arper.com/us_EN/blog/category/arper_inspirations.html
+#
+# ─────────────────────────────────────────────────────────
+# 【页面结构说明】
+#
+#   这个页面有两种卡片类型，行为完全不同：
+#
+#   类型 A  →  .post.case_study
+#              点击直接跳转到项目详情页
+#              标题和链接直接写在 HTML 里，静态抓取即可
+#
+#   类型 B  →  .post.popup_posts
+#              点击会在当前页弹出一个隐藏层（弹窗）
+#              弹窗里才有项目名称和"Go to Project"跳转链接
+#              弹窗内容是 JS 动态注入的，静态 HTML 中只有缩略图
+#              需要用 Selenium 模拟点击才能拿到完整数据
+#
+#   此外，页面底部有"Load More"按钮，点击后 JS 动态加载更多卡片
+#   同样需要 Selenium 才能获取全部数据
+#
+# ─────────────────────────────────────────────────────────
+#
+# 【属性说明】
+#   selector  → 告诉爬虫"去哪里找"，CSS 选择器
+#   attribute → 告诉爬虫"取什么值"：text=文字 / src=图片地址 / href=链接地址
+#   multiple  → true=返回列表 / false=返回单个值
+#
+# ─────────────────────────────────────────────────────────
+
+inspirations_listing:
+
+  # ── 整体容器 ─────────────────────────────────────────────
+  # 所有卡片都在这个容器里
+  container:
+    selector: ".inspirations-listing"
+    attribute: "text"
+    multiple: false
+
+  # ── 类型 A：Case Study 卡片（可静态抓取）────────────────
+  # 这类卡片有完整的标题和链接，requests + BeautifulSoup 即可
+  case_study_cards:
+
+    # 卡片容器，每个 .post.case_study 是一个项目
+    card:
+      selector: ".inspirations-listing .post.case_study"
+      attribute: "text"
+      multiple: true
+
+    # 项目名称（在 a.thumbnail 的 title 属性里）
+    title:
+      selector: ".inspirations-listing .post.case_study a.thumbnail"
+      attribute: "title"
+      multiple: true
+
+    # 项目详情页链接（直接跳转）
+    url:
+      selector: ".inspirations-listing .post.case_study a.thumbnail"
+      attribute: "href"
+      multiple: true
+
+    # 卡片缩略图
+    thumbnail:
+      selector: ".inspirations-listing .post.case_study a.thumbnail img"
+      attribute: "src"
+      multiple: true
+
+  # ── 类型 B：Popup 卡片（需要 Selenium 动态抓取）─────────
+  # 这类卡片点击后弹出隐藏层，标题和链接在弹窗里
+  # 静态 HTML 中只有 data-id 和缩略图，没有标题和链接
+  popup_cards:
+
+    # 卡片容器，每个 .post.popup_posts 是一个项目
+    card:
+      selector: ".inspirations-listing .post.popup_posts"
+      attribute: "text"
+      multiple: true
+
+    # 卡片唯一 ID（用于关联弹窗数据，在子元素 span[data-id] 里）
+    data_id:
+      selector: ".inspirations-listing .post.popup_posts span[data-id]"
+      attribute: "data-id"
+      multiple: true
+
+    # 卡片缩略图（静态 HTML 中有）
+    thumbnail:
+      selector: ".inspirations-listing .post.popup_posts img"
+      attribute: "src"
+      multiple: true
+
+  # ── 弹窗层（点击 popup 卡片后出现，需要 Selenium）────────
+  # 弹窗由 JS 动态注入，每次只显示一个
+  popup_layer:
+
+    # 弹窗容器
+    container:
+      selector: "aside.post-popup-container"
+      attribute: "text"
+      multiple: false
+
+    # 项目名称（弹窗标题）
+    title:
+      selector: "aside.post-popup-container h1.modal-title"
+      attribute: "text"
+      multiple: false
+
+    # "Go to Project" 跳转链接（项目详情页地址）
+    url:
+      selector: "#projectBtn a"
+      attribute: "href"
+      multiple: false
+
+  # ── Load More 按钮 ────────────────────────────────────────
+  # 点击后 JS 加载下一批卡片，需要 Selenium 循环点击直到按钮消失
+  load_more_button:
+    selector: "button.inspiration-load-more"
+    attribute: "text"
+    multiple: false

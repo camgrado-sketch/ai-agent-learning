@@ -1,0 +1,77 @@
+# Arper 项目详情页 爬虫选择器配置
+# 目标页面示例：https://www.arper.com/us_EN/blog/centro-medico-synlab-manifattura-firenze.html
+#
+# 【属性说明】
+#   selector  → CSS 选择器，告诉爬虫去哪里找元素
+#   attribute → 取值方式：text=文字内容 / src=图片地址 / href=链接地址
+#   multiple  → true=返回列表 / false=返回单个值
+
+project:
+
+  # ── 项目名称 ─────────────────────────────────────────────
+  # 页面顶部大标题，位于 h1.post-title 内
+  title:
+    selector: "h1.post-title"
+    attribute: "text"
+    multiple: false
+
+  # ── 发布日期 ─────────────────────────────────────────────
+  # 日期文字在 span.amblog-date 里，格式如 "21 April 2026"
+  date:
+    selector: "span.amblog-date"
+    attribute: "text"
+    multiple: false
+
+  # ── 项目图片 ─────────────────────────────────────────────
+  # 正文图片全部在 .full_content 容器里
+  # 这里的图片是真实项目现场照，不含产品缩略图
+  images:
+    selector: ".full_content img"
+    attribute: "src"
+    multiple: true
+
+  # ── 项目 Info（地点 / 建筑师 / 摄影）────────────────────
+  # 整个 Info 区块在 .details-wrapper 里
+  # 每个子字段有固定的 id，可单独提取
+  info:
+    container:
+      selector: ".details-wrapper"
+      attribute: "text"
+      multiple: false
+    location:
+      selector: "#location span"
+      attribute: "text"
+      multiple: false
+    architect:
+      selector: "#architect span"
+      attribute: "text"
+      multiple: false
+    photo_credit:
+      selector: "#foto span"
+      attribute: "text"
+      multiple: false
+
+  # ── 相关产品 ─────────────────────────────────────────────
+  # 产品缩略图和链接在 .featured_products 容器里
+  # 注意：产品名称不在本页，需要访问产品链接页取 h2.product-title
+  specified_products:
+    container:
+      selector: ".featured_products"
+      attribute: "text"
+      multiple: false
+    product_links:
+      selector: ".featured_products .featured-images a"
+      attribute: "href"
+      multiple: true
+    product_thumbnails:
+      selector: ".featured_products .featured-images a img"
+      attribute: "src"
+      multiple: true
+
+  # ── 产品名称（需二次请求产品页）─────────────────────────
+  # 产品详情页的名称在 h2.product-title 里
+  # 脚本会自动访问上面的 product_links，取每个产品页的名称
+  product_name_on_product_page:
+    selector: "h2.product-title"
+    attribute: "text"
+    multiple: false
